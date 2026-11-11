@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="tg">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Омӯзгори Зеҳнӣ</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+  <header>
+    <div class="logo" id="app-title">🎓 Омӯзгори Зеҳнӣ</div>
+    <div class="lang-switch">
+      <button onclick="setLanguage('tg')" class="active" id="btn-tg">ТҶ</button>
+      <button onclick="setLanguage('ru')" id="btn-ru">РУ</button>
+      <button onclick="setLanguage('en')" id="btn-en">EN</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2 id="select-grade-title">Синфро интихоб кунед (1–11):</h2>
+      <div class="grades-grid" id="grades-container"></div>
+    </section>
+
+    <section class="card" id="subjects-section" style="display:none;">
+      <h2 id="select-subject-title">Фанро интихоб кунед:</h2>
+      <div class="subjects-list" id="subjects-container"></div>
+    </section>
+
+    <section class="card chat-box">
+      <h2 id="ai-title">🤖 Ёрдамчии Зеҳнӣ (Офлайн)</h2>
+      <div class="chat-messages" id="chat-messages">
+        <div class="msg bot" id="welcome-msg">Салом! Ман Омӯзгори зеҳнии шумо. Синф ва фанро интихоб кунед ё савол нависед.</div>
+      </div>
+      <div class="chat-input">
+        <input type="text" id="user-input" placeholder="Саволи худро нависед...">
+        <button onclick="askTeacher()" id="send-btn">Фиристодан</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+  </script>
+</body>
+</html>
