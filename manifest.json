@@ -1,0 +1,9 @@
+{
+  "name": "Омӯзгори Зеҳнӣ",
+  "short_name": "Омӯзгор",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f0f4f8",
+  "theme_color": "#0f172a",
+  "icons": []
+}
