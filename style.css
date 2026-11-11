@@ -1,0 +1,21 @@
+css
+* { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+body { margin: 0; background: #f0f4f8; color: #1e293b; }
+header { background: #0f172a; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+.logo { font-size: 1.2rem; font-weight: bold; }
+.lang-switch button { background: #334155; color: white; border: none; padding: 6px 10px; border-radius: 6px; margin-left: 4px; cursor: pointer; }
+.lang-switch button.active { background: #2563eb; }
+main { max-width: 700px; margin: 20px auto; padding: 0 15px; }
+.card { background: white; padding: 18px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 18px; }
+h2 { margin-top: 0; font-size: 1.1rem; color: #0f172a; }
+.grades-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.grade-btn, .subject-btn { padding: 12px; border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 8px; font-weight: 600; cursor: pointer; }
+.grade-btn:hover, .subject-btn:hover { background: #2563eb; color: white; border-color: #2563eb; }
+.subjects-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.chat-messages { height: 220px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-bottom: 10px; background: #f8fafc; }
+.msg { padding: 8px 12px; border-radius: 8px; margin-bottom: 8px; max-width: 85%; line-height: 1.4; }
+.msg.bot { background: #e0e7ff; color: #1e1b4b; }
+.msg.user { background: #2563eb; color: white; margin-left: auto; }
+.chat-input { display: flex; gap: 8px; }
+.chat-input input { flex: 1; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; }
+.chat-input button { background: #16a34a; color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; 
