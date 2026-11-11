@@ -1,4 +1,3 @@
-javascript
 let currentLang = 'tg';
 let selectedGrade = null;
 
@@ -9,7 +8,7 @@ const translations = {
     selectSubject: "Фанро интихоб кунед:",
     aiTitle: "🤖 Ёрдамчии Зеҳнӣ (Офлайн)",
     welcome: "Салом! Ман Омӯзгори зеҳнии шумо. Синф ва фанро интихоб кунед ё савол нависед.",
-    placeholder: "Масалан: Теоремаи Пифагор чист?",
+    placeholder: "Масалан: Атом чист?",
     send: "Фиристодан",
     gradeWord: "Синфи",
     subjects: ["Математика", "Забони тоҷикӣ", "Физика", "Химия", "Биология", "Таърих", "Забони англисӣ"]
@@ -20,7 +19,7 @@ const translations = {
     selectSubject: "Выберите предмет:",
     aiTitle: "🤖 Умный Помощник (Офлайн)",
     welcome: "Привет! Я ваш умный учитель. Выберите класс и предмет или задайте вопрос.",
-    placeholder: "Например: Что такое теорема Пифагора?",
+    placeholder: "Например: Что такое атом?",
     send: "Отправить",
     gradeWord: "Класс",
     subjects: ["Математика", "Русский язык", "Физика", "Химия", "Биология", "История", "Английский язык"]
@@ -31,29 +30,31 @@ const translations = {
     selectSubject: "Select Subject:",
     aiTitle: "🤖 AI Assistant (Offline)",
     welcome: "Hello! I am your Smart Teacher. Select a grade and subject or ask a question.",
-    placeholder: "Example: What is the Pythagorean theorem?",
+    placeholder: "Example: What is an atom?",
     send: "Send",
     gradeWord: "Grade",
     subjects: ["Mathematics", "English", "Physics", "Chemistry", "Biology", "History", "Computer Science"]
   }
 };
 
-// Пойгоҳи дониши офлайн (намуна барои оғоз)
 const offlineKnowledge = {
+  "атом": "Атом — хурдтарин заррачаи модда аст, ки хосиятҳои химиявии онро нигоҳ медорад. Он аз ядро (протонҳо ва нейтронҳо) ва электронҳо иборат аст.",
   "пифагор": "Теоремаи Пифагор: Дар секунҷаи росткунҷа квадрати гипотенуза ба суммаи квадратҳои катетҳо баробар аст (a² + b² = c²).",
   "пифагора": "Теорема Пифагора: В прямоугольном треугольнике квадрат гипотенузы равен сумме квадратов катетов (a² + b² = c²).",
   "pythagorean": "Pythagorean theorem: In a right triangle, the square of the hypotenuse equals the sum of the squares of the other two sides (a² + b² = c²).",
-  "об": "Формулаи химиявии об H₂O аст. Он аз ду атоми гидроген ва як атоми оксиген иборат мебошад."
+  "об": "Формулаи химиявии об H₂O аст. Он аз ду атоми гидроген ва як атоми оксиген иборат мебошад.",
+  "atom": "An atom is the smallest unit of matter that retains the properties of an element. It consists of a nucleus (protons and neutrons) and electrons."
 };
 
 function renderGrades() {
   const container = document.getElementById('grades-container');
+  if (!container) return;
   container.innerHTML = '';
   for (let i = 1; i <= 11; i++) {
     const btn = document.createElement('button');
     btn.className = 'grade-btn';
-    btn.innerText = `${translations[currentLang].gradeWord} ${i}`;
-    btn.onclick = () => selectGrade(i);
+    btn.innerText = translations[currentLang].gradeWord + ' ' + i;
+    btn.onclick = function() { selectGrade(i); };
     container.appendChild(btn);
   }
 }
@@ -64,19 +65,21 @@ function selectGrade(grade) {
   const subContainer = document.getElementById('subjects-container');
   sec.style.display = 'block';
   subContainer.innerHTML = '';
-  translations[currentLang].subjects.forEach(sub => {
+  translations[currentLang].subjects.forEach(function(sub) {
     const btn = document.createElement('button');
     btn.className = 'subject-btn';
     btn.innerText = sub;
-    btn.onclick = () => addMessage(`✅ ${translations[currentLang].gradeWord} ${grade} — ${sub}. Мавзӯи худро нависед!`, 'bot');
+    btn.onclick = function() {
+      addMessage('✅ ' + translations[currentLang].gradeWord + ' ' + grade + ' — ' + sub + '. Саволи худро нависед!', 'bot');
+    };
     subContainer.appendChild(btn);
   });
 }
 
 function setLanguage(lang) {
   currentLang = lang;
-  document.querySelectorAll('.lang-switch button').forEach(b => b.classList.remove('active'));
-  document.getElementById(`btn-${lang}`).classList.add('active');
+  document.querySelectorAll('.lang-switch button').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('btn-' + lang).classList.add('active');
   const t = translations[lang];
   document.getElementById('app-title').innerText = t.title;
   document.getElementById('select-grade-title').innerText = t.selectGrade;
@@ -92,7 +95,7 @@ function setLanguage(lang) {
 function addMessage(text, sender) {
   const box = document.getElementById('chat-messages');
   const div = document.createElement('div');
-  div.className = `msg ${sender}`;
+  div.className = 'msg ' + sender;
   div.innerText = text;
   box.appendChild(div);
   box.scrollTop = box.scrollHeight;
@@ -114,13 +117,16 @@ function askTeacher() {
     }
   }
   if (!reply) {
-    reply = currentLang === 'tg' 
-      ? "Ин мавзӯъ дар пойгоҳи офлайн сабт мешавад. Ҳоло метавонед дар бораи «Теоремаи Пифагор» ё «Об» пурсед."
-      : currentLang === 'ru'
-      ? "Эта тема будет добавлена в офлайн-базу. Сейчас попробуйте спросить про «Теорему Пифагора»."
-      : "This topic will be added to the offline database. Try asking about the 'Pythagorean theorem'.";
+    if (currentLang === 'tg') {
+      reply = "Ин мавзӯъ ба зудӣ илова мешавад. Ҳоло метавонед дар бораи «Атом», «Пифагор» ё «Об» пурсед.";
+    } else if (currentLang === 'ru') {
+      reply = "Эта тема скоро будет добавлена. Сейчас спросите про «Атом» или «Теорему Пифагора».";
+    } else {
+      reply = "This topic will be added soon. Try asking about 'Atom' or 'Pythagorean theorem'.";
+    }
   }
-  setTimeout(() => addMessage(reply, 'bot'), 300);
+  setTimeout(function() { addMessage(reply, 'bot'); }, 250);
 }
 
+document.addEventListener('DOMContentLoaded', renderGrades);
 renderGrades();
