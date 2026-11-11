@@ -1,32 +1,30 @@
 let lang = 'tg', grade = null, qIndex = 0;
 
 const data = {
-  tg: { t: "🎓 Омӯзгори Зеҳнӣ", g: "Синфро интихоб кунед (1–11):", s: "Фанро интихоб кунед:", tabChat: "🤖 Омӯзгори Зеҳнӣ", tabQuiz: "📝 Тестҳо", w: "Салом! Дилхоҳ саволро нависед (ҳам бо интернет ва ҳам бе интернет кор мекунад).", p: "Масалан: Сино, Парандагон, Атом, Пифагор...", b: "Фиристодан", gw: "Синфи", next: "Саволи навбатӣ ➔", subs: ["Математика", "Забони тоҷикӣ", "Физика", "Химия", "Биология", "Таърих"] },
-  ru: { t: "🎓 Умный Учитель", g: "Выберите класс (1–11):", s: "Выберите предмет:", tabChat: "🤖 Умный Учитель", tabQuiz: "📝 Тесты", w: "Привет! Задайте любой вопрос (работает онлайн и офлайн).", p: "Например: Сино, Птицы, Атом, Пифагор...", b: "Отправить", gw: "Класс", next: "Следующий вопрос ➔", subs: ["Математика", "Русский язык", "Физика", "Химия", "Биология", "История"] },
-  en: { t: "🎓 Smart Teacher", g: "Select Grade (1–11):", s: "Select Subject:", tabChat: "🤖 Smart Teacher", tabQuiz: "📝 Quizzes", w: "Hello! Ask any question (works both online and offline).", p: "Example: Avicenna, Birds, Atom, Pythagorean...", b: "Send", gw: "Grade", next: "Next Question ➔", subs: ["Mathematics", "English", "Physics", "Chemistry", "Biology", "History"] }
+  tg: { t: "🎓 Омӯзгори Зеҳнӣ", g: "Синфро интихоб кунед (1–11):", s: "Фанро интихоб кунед:", tabChat: "🤖 Омӯзгори Зеҳнӣ", tabQuiz: "📝 Тестҳо", w: "Салом! Дилхоҳ саволро нависед (ҳам бо интернет ва ҳам бе интернет кор мекунад).", p: "Масалан: Қувва чист?", b: "Фиристодан", gw: "Синфи", next: "Саволи навбатӣ ➔", subs: ["Математика", "Забони тоҷикӣ", "Физика", "Химия", "Биология", "Таърих"] },
+  ru: { t: "🎓 Умный Учитель", g: "Выберите класс (1–11):", s: "Выберите предмет:", tabChat: "🤖 Умный Учитель", tabQuiz: "📝 Тесты", w: "Привет! Задайте любой вопрос (работает онлайн и офлайн).", p: "Например: Что такое сила?", b: "Отправить", gw: "Класс", next: "Следующий вопрос ➔", subs: ["Математика", "Русский язык", "Физика", "Химия", "Биология", "История"] },
+  en: { t: "🎓 Smart Teacher", g: "Select Grade (1–11):", s: "Select Subject:", tabChat: "🤖 Smart Teacher", tabQuiz: "📝 Quizzes", w: "Hello! Ask any question (works both online and offline).", p: "Example: What is force?", b: "Send", gw: "Grade", next: "Next Question ➔", subs: ["Mathematics", "English", "Physics", "Chemistry", "Biology", "History"] }
 };
 
-// Пойгоҳи асосии дарунсохт (барои кори фаврӣ бе интернет)
 const builtInKB = {
+  "қувва": "Қувва — бузургии физикии векторӣ буда, ченаки таъсири мутақобилаи ҷисмҳо ба ҳамдигар мебошад. Воҳиди ченаки он Нютон (Н) аст (F = m · a).",
+  "сила": "Сила — физическая векторная величина, являющаяся мерой воздействия на данное тело со стороны других тел (F = m · a). Измеряется в Ньютонах (Н).",
+  "force": "Force is an influence that can change the motion of an object (F = m · a). Measured in Newtons (N).",
   "паранд": "Парандагон — ҳайвоноти муҳрадори гармхуне мебошанд, ки баданашон бо пар пӯшида шудааст, бол ва дили чорхонагӣ доранд.",
   "атом": "Атом — хурдтарин заррачаи модда аст, ки аз ядро (протонҳо ва нейтронҳо) ва электронҳо иборат мебошад.",
   "пифагор": "Теоремаи Пифагор: Дар секунҷаи росткунҷа квадрати гипотенуза ба суммаи квадратҳои катетҳо баробар аст (a² + b² = c²).",
   "об": "Формулаи химиявии об H₂O аст. Дар 0°C ях мекунад ва дар 100°C меҷӯшад.",
   "фотосинтез": "Фотосинтез — раванди дар баргҳои сабз бо ёрии нури офтоб аз гази карбонат ва об ҳосил шудани моддаҳои органикӣ ва оксиген аст.",
   "сомониён": "Давлати Сомониён (875–999) — аввалин давлати мутамаркази тоҷикон бо пойтахташ Бухоро ва амири бузургаш Исмоили Сомонӣ.",
-  "ҳуҷайра": "Ҳуҷайра — воҳиди асосии сохторӣ ва функсионалии ҳамаи организмҳои зинда мебошад.",
-  "нютон": "Қонуни дуюми Нютон: Қувва ба ҳосили зарби масса ва шитоб баробар аст (F = m · a).",
-  "сино": "Абӯалӣ ибни Сино (980–1037) — олим, файласуф ва табиби бузурги тоҷик, муаллифи китобҳои машҳури «Ал-Қонун фит-тиб» ва «Донишнома».",
-  "рӯдакӣ": "Абӯабдуллоҳи Рӯдакӣ (858–941) — сардафтари адабиёти классикии форсу тоҷик, ки бо номи «Одамушшуаро» маъруф аст."
+  "сино": "Абӯалӣ ибни Сино (980–1037) — олим, файласуф ва табиби бузурги тоҷик, муаллифи китобҳои «Ал-Қонун фит-тиб» ва «Донишнома»."
 };
 
-// Хотираи худомӯз (ҳамаи ҷавобҳои аз интернет ёфташударо барои офлайн сабт мекунад)
 let savedKB = JSON.parse(localStorage.getItem('omuzgor_kb') || '{}');
 
 const quizzes = [
-  { q: "1. Формулаи химиявии об кадом аст?", opts: ["CO₂", "H₂O", "O₂"], ans: 1 },
-  { q: "2. Дили парандагон аз чанд хона иборат аст?", opts: ["2 хона", "3 хона", "4 хона"], ans: 2 },
-  { q: "3. Дар секунҷаи росткунҷа a=3 ва b=4 бошад, гипотенуза (c) чанд аст?", opts: ["5", "6", "7"], ans: 0 },
+  { q: "1. Воҳиди ченаки қувва дар физика чист?", opts: ["Ҷоул (Ҷ)", "Нютон (Н)", "Ватт (Вт)"], ans: 1 },
+  { q: "2. Формулаи химиявии об кадом аст?", opts: ["CO₂", "H₂O", "O₂"], ans: 1 },
+  { q: "3. Дили парандагон аз чанд хона иборат аст?", opts: ["2 хона", "3 хона", "4 хона"], ans: 2 },
   { q: "4. Пойтахти давлати Сомониён кадом шаҳр буд?", opts: ["Самарқанд", "Бухоро", "Балх"], ans: 1 }
 ];
 
@@ -93,7 +91,6 @@ function msg(txt, who) {
   box.innerHTML += `<div class="msg ${who}">${txt}</div>`; box.scrollTop = box.scrollHeight;
 }
 
-// Ҷустуҷӯи оқил дар дохили пойгоҳи офлайн
 function searchLocal(query) {
   const low = query.toLowerCase().replace(/[?.,!]/g, '');
   const words = low.split(/\s+/);
@@ -102,7 +99,6 @@ function searchLocal(query) {
   return null;
 }
 
-// Гирифтани маълумот аз интернет (Википедия) ва сабти худкор барои офлайн
 async function searchOnline(query) {
   const clean = query.replace(/(чист|кист|дар бораи|что такое|кто такой|what is|about|\?)/gi, '').trim();
   const wikiLang = lang === 'tg' ? 'tg' : lang === 'ru' ? 'ru' : 'en';
@@ -110,13 +106,12 @@ async function searchOnline(query) {
     const searchUrl = `https://${wikiLang}.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(clean)}&format=json&origin=*`;
     const sRes = await fetch(searchUrl);
     const sData = await sRes.json();
-    if (sData.query?.search?.length > 0) {
+    if (sData.query && sData.query.search && sData.query.search.length > 0) {
       const title = sData.query.search[0].title;
       const sumUrl = `https://${wikiLang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
       const sumRes = await fetch(sumUrl);
       const sumData = await sumRes.json();
       if (sumData.extract) {
-        // Сабт дар хотираи телефон барои истифодаи минбаъда БЕ ИНТЕРНЕТ
         savedKB[clean.toLowerCase()] = sumData.extract;
         localStorage.setItem('omuzgor_kb', JSON.stringify(savedKB));
         return sumData.extract;
@@ -131,27 +126,21 @@ async function askTeacher() {
   if (!q) return;
   msg(q, 'user'); inp.value = '';
 
-  // 1. Аввал аз хотираи офлайн месанҷад (фаврӣ)
   const localAns = searchLocal(q);
-  if (localAns) {
-    setTimeout(() => msg(localAns, 'bot'), 150);
-    return;
-  }
+  if (localAns) { setTimeout(() => msg(localAns, 'bot'), 150); return; }
 
-  // 2. Агар интернет бошад, аз интернет меёбад ва барои офлайн сабт мекунад
   if (navigator.onLine) {
     msg("⏳ Дар ҳоли ҷустуҷӯ...", 'bot');
     const onlineAns = await searchOnline(q);
     const box = document.getElementById('chat-messages');
     box.removeChild(box.lastChild);
     if (onlineAns) {
-      msg(onlineAns + "\n\n💾 (Ин маълумот барои кори бе интернет сабт шуд!)", 'bot');
+      msg(onlineAns + "\n\n💾 (Барои кори бе интернет сабт шуд!)", 'bot');
       return;
     }
   }
 
-  // 3. Агар интернет набошад ва мавзӯъ нав бошад
-  msg("📴 Ин мавзӯъ ҳанӯз дар хотираи офлайн нест. Як маротиба интернетро фаъол карда пурсед — барнома онро меёбад ва барои ҳамеша бе интернет сабт мекунад!", 'bot');
+  msg("📴 Ин мавзӯъ дар хотираи офлайн нест. Бо интернет пурсед — барнома онро меёбад ва барои бе интернет сабт мекунад!", 'bot');
 }
 
 init();
