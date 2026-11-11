@@ -4,7 +4,28 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Омӯзгори Зеҳнӣ</title>
-  <link rel="stylesheet" href="style.css?v=3">
+  <style>
+    * { box-sizing: border-box; font-family: system-ui, sans-serif; }
+    body { margin: 0; background: #f0f4f8; color: #1e293b; }
+    header { background: #0f172a; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-size: 1.2rem; font-weight: bold; }
+    .lang-switch button { background: #334155; color: white; border: none; padding: 6px 10px; border-radius: 6px; margin-left: 4px; cursor: pointer; }
+    .lang-switch button.active { background: #2563eb; }
+    main { max-width: 700px; margin: 20px auto; padding: 0 15px; }
+    .card { background: white; padding: 18px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 18px; }
+    h2 { margin-top: 0; font-size: 1.1rem; color: #0f172a; }
+    .grades-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .grade-btn, .subject-btn { padding: 12px; border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 8px; font-weight: 600; cursor: pointer; }
+    .grade-btn:hover, .subject-btn:hover { background: #2563eb; color: white; }
+    .subjects-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chat-messages { height: 220px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-bottom: 10px; background: #f8fafc; }
+    .msg { padding: 8px 12px; border-radius: 8px; margin-bottom: 8px; max-width: 85%; line-height: 1.4; }
+    .msg.bot { background: #e0e7ff; color: #1e1b4b; }
+    .msg.user { background: #2563eb; color: white; margin-left: auto; }
+    .chat-input { display: flex; gap: 8px; }
+    .chat-input input { flex: 1; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; }
+    .chat-input button { background: #16a34a; color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+  </style>
 </head>
 <body>
   <header>
@@ -30,22 +51,100 @@
     <section class="card chat-box">
       <h2 id="ai-title">🤖 Ёрдамчии Зеҳнӣ (Офлайн)</h2>
       <div class="chat-messages" id="chat-messages">
-        <div class="msg bot" id="welcome-msg">Салом! Ман Омӯзгори зеҳнии шумо. Синф ва фанро интихоб кунед ё савол нависед.</div>
+        <div class="msg bot" id="welcome-msg">Салом! Синфро интихоб кунед ё савол нависед.</div>
       </div>
       <div class="chat-input">
-        <input type="text" id="user-input" placeholder="Саволи худро нависед...">
+        <input type="text" id="user-input" placeholder="Масалан: Атом чист?">
         <button onclick="askTeacher()" id="send-btn">Фиристодан</button>
       </div>
     </section>
   </main>
 
   <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then(function(regs) {
-        for (let reg of regs) reg.unregister();
+    let lang = 'tg';
+    let grade = null;
+
+    const data = {
+      tg: {
+        t: "🎓 Омӯзгори Зеҳнӣ", g: "Синфро интихоб кунед (1–11):", s: "Фанро интихоб кунед:",
+        ai: "🤖 Ёрдамчии Зеҳнӣ (Офлайн)", w: "Салом! Синфро интихоб кунед ё савол нависед.",
+        p: "Масалан: Атом чист?", b: "Фиристодан", gw: "Синфи",
+        subs: ["Математика", "Забони тоҷикӣ", "Физика", "Химия", "Биология", "Таърих"]
+      },
+      ru: {
+        t: "🎓 Умный Учитель", g: "Выберите класс (1–11):", s: "Выберите предмет:",
+        ai: "🤖 Умный Помощник (Офлайн)", w: "Привет! Выберите класс или задайте вопрос.",
+        p: "Например: Что такое атом?", b: "Отправить", gw: "Класс",
+        subs: ["Математика", "Русский язык", "Физика", "Химия", "Биология", "История"]
+      },
+      en: {
+        t: "🎓 Smart Teacher", g: "Select Grade (1–11):", s: "Select Subject:",
+        ai: "🤖 AI Assistant (Offline)", w: "Hello! Select a grade or ask a question.",
+        p: "Example: What is an atom?", b: "Send", gw: "Grade",
+        subs: ["Mathematics", "English", "Physics", "Chemistry", "Biology", "History"]
+      }
+    };
+
+    const kb = {
+      "атом": "Атом — хурдтарин заррачаи модда аст, ки аз ядро ва электронҳо иборат мебошад.",
+      "пифагор": "Теоремаи Пифагор: Дар секунҷаи росткунҷа a² + b² = c² аст.",
+      "об": "Формулаи химиявии об H₂O аст.",
+      "atom": "An atom is the smallest unit of matter."
+    };
+
+    function init() {
+      const gc = document.getElementById('grades-container');
+      gc.innerHTML = '';
+      for (let i = 1; i <= 11; i++) {
+        gc.innerHTML += `<button class="grade-btn" onclick="pickGrade(${i})">${data[lang].gw} ${i}</button>`;
+      }
+    }
+
+    function pickGrade(n) {
+      grade = n;
+      document.getElementById('subjects-section').style.display = 'block';
+      const sc = document.getElementById('subjects-container');
+      sc.innerHTML = '';
+      data[lang].subs.forEach(sub => {
+        sc.innerHTML += `<button class="subject-btn" onclick="msg('✅ ${data[lang].gw} ${n} — ${sub}. Савол нависед!','bot')">${sub}</button>`;
       });
     }
+
+    function setLanguage(l) {
+      lang = l;
+      document.querySelectorAll('.lang-switch button').forEach(b => b.classList.remove('active'));
+      document.getElementById('btn-' + l).classList.add('active');
+      const d = data[l];
+      document.getElementById('app-title').innerText = d.t;
+      document.getElementById('select-grade-title').innerText = d.g;
+      document.getElementById('select-subject-title').innerText = d.s;
+      document.getElementById('ai-title').innerText = d.ai;
+      document.getElementById('welcome-msg').innerText = d.w;
+      document.getElementById('user-input').placeholder = d.p;
+      document.getElementById('send-btn').innerText = d.b;
+      init();
+      if (grade) pickGrade(grade);
+    }
+
+    function msg(txt, who) {
+      const box = document.getElementById('chat-messages');
+      box.innerHTML += `<div class="msg ${who}">${txt}</div>`;
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function askTeacher() {
+      const inp = document.getElementById('user-input');
+      const q = inp.value.trim();
+      if (!q) return;
+      msg(q, 'user');
+      inp.value = '';
+      const low = q.toLowerCase();
+      let ans = "Ин мавзӯъ ба зудӣ илова мешавад. Ҳоло дар бораи «Атом», «Пифагор» ё «Об» пурсед.";
+      for (let k in kb) { if (low.includes(k)) ans = kb[k]; }
+      setTimeout(() => msg(ans, 'bot'), 200);
+    }
+
+    init();
   </script>
-  <script src="app.js?v=3"></script>
 </body>
 </html>
