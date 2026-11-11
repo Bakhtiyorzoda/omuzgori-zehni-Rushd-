@@ -2,163 +2,111 @@
 <html lang="tg">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Омӯзгори Зеҳнӣ</title>
   <style>
-    * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+    * { box-sizing: border-box; font-family: system-ui, sans-serif; }
     body { margin: 0; background: #f0f4f8; color: #1e293b; }
-    header { background: #0f172a; color: white; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-    .logo { font-size: 1.05rem; font-weight: bold; }
-    .lang-switch { display: flex; gap: 4px; flex-shrink: 0; }
-    .lang-switch button { background: #334155; color: white; border: none; padding: 6px 9px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; }
+    header { background: #0f172a; color: white; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; }
+    .lang-switch button { background: #334155; color: white; border: none; padding: 6px 9px; border-radius: 6px; margin-left: 4px; }
     .lang-switch button.active { background: #2563eb; font-weight: bold; }
     main { max-width: 680px; margin: 14px auto; padding: 0 12px; }
-    .card { background: white; padding: 14px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 14px; }
-    h2 { margin: 0 0 10px 0; font-size: 1rem; color: #0f172a; }
-    .grades-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .subjects-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-    .grade-btn, .subject-btn { width: 100%; padding: 10px 6px; border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer; text-align: center; }
-    .grade-btn.selected, .subject-btn.selected { background: #2563eb; color: white; border-color: #2563eb; }
-    .tabs { display: flex; gap: 8px; margin-bottom: 12px; }
-    .tab-btn { flex: 1; padding: 10px; border: none; border-radius: 8px; background: #e2e8f0; font-weight: bold; cursor: pointer; font-size: 0.95rem; }
-    .tab-btn.active { background: #0f172a; color: white; }
-    .chat-messages { height: 230px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-bottom: 10px; background: #f8fafc; }
-    .msg { padding: 8px 12px; border-radius: 8px; margin-bottom: 8px; max-width: 88%; line-height: 1.4; font-size: 0.92rem; word-wrap: break-word; }
-    .msg.bot { background: #e0e7ff; color: #1e1b4b; }
-    .msg.user { background: #2563eb; color: white; margin-left: auto; }
-    .chat-input { display: flex; gap: 6px; width: 100%; }
-    .chat-input input { flex: 1; min-width: 0; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; }
-    .chat-input button { flex-shrink: 0; background: #16a34a; color: white; border: none; padding: 10px 14px; border-radius: 8px; font-weight: bold; font-size: 0.9rem; cursor: pointer; }
-    .quiz-opt { display: block; width: 100%; text-align: left; padding: 10px 12px; margin-bottom: 8px; border: 1px solid #cbd5e1; border-radius: 8px; background: #f8fafc; font-size: 0.92rem; cursor: pointer; }
-    .quiz-opt.correct { background: #dcfce7; border-color: #16a34a; color: #14532d; font-weight: bold; }
-    .quiz-opt.wrong { background: #fee2e2; border-color: #dc2626; color: #7f1d1d; }
-    .next-btn { background: #2563eb; color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 6px; }
+    .card { background: white; padding: 14px; border-radius: 12px; margin-bottom: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+    h2 { margin: 0 0 10px 0; font-size: 1rem; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .btn { padding: 10px 6px; border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 8px; font-weight: 600; }
+    .btn.active { background: #2563eb; color: white; }
+    .chat { height: 220px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-bottom: 10px; background: #f8fafc; }
+    .msg { padding: 8px 12px; border-radius: 8px; margin-bottom: 8px; max-width: 88%; line-height: 1.4; }
+    .bot { background: #e0e7ff; }
+    .user { background: #2563eb; color: white; margin-left: auto; }
+    .row { display: flex; gap: 6px; }
+    input { flex: 1; min-width: 0; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; }
+    .send { background: #16a34a; color: white; border: none; padding: 10px 14px; border-radius: 8px; font-weight: bold; }
   </style>
 </head>
 <body>
   <header>
-    <div class="logo" id="app-title">🎓 Омӯзгори Зеҳнӣ</div>
+    <b>🎓 Омӯзгори Зеҳнӣ</b>
     <div class="lang-switch">
-      <button onclick="setLanguage('tg')" class="active" id="btn-tg">ТҶ</button>
-      <button onclick="setLanguage('ru')" id="btn-ru">РУ</button>
-      <button onclick="setLanguage('en')" id="btn-en">EN</button>
+      <button onclick="setL('tg')" id="tg" class="active">ТҶ</button>
+      <button onclick="setL('ru')" id="ru">РУ</button>
+      <button onclick="setL('en')" id="en">EN</button>
     </div>
   </header>
-
   <main>
-    <section class="card">
-      <h2 id="select-grade-title">Синфро интихоб кунед (1–11):</h2>
-      <div class="grades-grid" id="grades-container"></div>
-    </section>
-
-    <section class="card" id="subjects-section" style="display:none;">
-      <h2 id="select-subject-title">Фанро интихоб кунед:</h2>
-      <div class="subjects-list" id="subjects-container"></div>
-    </section>
-
-    <div class="tabs">
-      <button class="tab-btn active" id="tab-chat" onclick="switchTab('chat')">🤖 Омӯзгори Зеҳнӣ</button>
-      <button class="tab-btn" id="tab-quiz" onclick="switchTab('quiz')">📝 Тестҳо</button>
+    <div class="card">
+      <h2 id="gt">Синфро интихоб кунед (1–11):</h2>
+      <div class="grid" id="grades"></div>
     </div>
-
-    <section class="card" id="chat-section">
-      <div class="chat-messages" id="chat-messages">
-        <div class="msg bot" id="welcome-msg">Салом! Синф ва фанро интихоб кунед ё савол нависед (масалан: Парандагон, Атом, Пифагор, Об, Сомониён).</div>
+    <div class="card" id="subCard" style="display:none;">
+      <h2 id="st">Фанро интихоб кунед:</h2>
+      <div class="grid" id="subs"></div>
+    </div>
+    <div class="card">
+      <div class="chat" id="chat"><div class="msg bot" id="wm">Салом! Дилхоҳ саволро нависед (бо интернет ва бе интернет кор мекунад).</div></div>
+      <div class="row">
+        <input id="inp" placeholder="Масалан: Қувва чист?">
+        <button class="send" onclick="ask()" id="sb">Фиристодан</button>
       </div>
-      <div class="chat-input">
-        <input type="text" id="user-input" placeholder="Саволи худро нависед...">
-        <button onclick="askTeacher()" id="send-btn">Фиристодан</button>
-      </div>
-    </section>
-
-    <section class="card" id="quiz-section" style="display:none;">
-      <h2 id="quiz-q">Саволи тестӣ:</h2>
-      <div id="quiz-options"></div>
-      <div id="quiz-feedback" style="margin-top:8px; font-weight:bold;"></div>
-      <button class="next-btn" id="next-q-btn" onclick="nextQuestion()">Саволи навбатӣ ➔</button>
-    </section>
+    </div>
   </main>
-
   <script>
-    let lang = 'tg';
-    let grade = null;
-    let qIndex = 0;
-
-    const data = {
-      tg: {
-        t: "🎓 Омӯзгори Зеҳнӣ", g: "Синфро интихоб кунед (1–11):", s: "Фанро интихоб кунед:",
-        tabChat: "🤖 Омӯзгори Зеҳнӣ", tabQuiz: "📝 Тестҳо",
-        w: "Салом! Синф ва фанро интихоб кунед ё савол нависед (масалан: Парандагон, Атом, Пифагор, Об, Сомониён).",
-        p: "Савол нависед...", b: "Фиристодан", gw: "Синфи", next: "Саволи навбатӣ ➔",
-        subs: ["Математика", "Забони тоҷикӣ", "Физика", "Химия", "Биология", "Таърих"]
-      },
-      ru: {
-        t: "🎓 Умный Учитель", g: "Выберите класс (1–11):", s: "Выберите предмет:",
-        tabChat: "🤖 Умный Учитель", tabQuiz: "📝 Тесты",
-        w: "Привет! Выберите класс и предмет или спросите (например: Птицы, Атом, Пифагор, Вода).",
-        p: "Напишите вопрос...", b: "Отправить", gw: "Класс", next: "Следующий вопрос ➔",
-        subs: ["Математика", "Русский язык", "Физика", "Химия", "Биология", "История"]
-      },
-      en: {
-        t: "🎓 Smart Teacher", g: "Select Grade (1–11):", s: "Select Subject:",
-        tabChat: "🤖 Smart Teacher", tabQuiz: "📝 Quizzes",
-        w: "Hello! Select a grade or ask a question (e.g., Birds, Atom, Pythagorean, Water).",
-        p: "Type a question...", b: "Send", gw: "Grade", next: "Next Question ➔",
-        subs: ["Mathematics", "English", "Physics", "Chemistry", "Biology", "History"]
-      }
+    let L = 'tg', G = null;
+    const T = {
+      tg: { gt: "Синфро интихоб кунед (1–11):", st: "Фанро интихоб кунед:", wm: "Салом! Дилхоҳ саволро нависед.", sb: "Фиристодан", gw: "Синфи", s: ["Математика", "Забон", "Физика", "Химия", "Биология", "Таърих"] },
+      ru: { gt: "Выберите класс (1–11):", st: "Выберите предмет:", wm: "Привет! Задайте любой вопрос.", sb: "Отправить", gw: "Класс", s: ["Математика", "Язык", "Физика", "Химия", "Биология", "История"] },
+      en: { gt: "Select Grade (1–11):", st: "Select Subject:", wm: "Hello! Ask any question.", sb: "Send", gw: "Grade", s: ["Math", "Language", "Physics", "Chemistry", "Biology", "History"] }
     };
-
-    const kb = {
-      "паранд": "Парандагон — ҳайвоноти муҳрадори гармхуне мебошанд, ки баданашон бо пар пӯшида шудааст ва пойҳои пешашон ба бол табдил ёфтаанд. Онҳо тухм мегузоранд ва дили чорхонагӣ доранд.",
-      "птиц": "Птицы — теплокровные позвоночные животные, тело которых покрыто перьями, а передние конечности видоизменены в крылья.",
-      "bird": "Birds are warm-blooded vertebrates with feathers, toothless beaked jaws, and a four-chambered heart.",
-      "атом": "Атом — хурдтарин заррачаи модда аст, ки аз ядро (протонҳо ва нейтронҳо) ва электронҳо иборат мебошад.",
-      "atom": "Атом — наименьшая частица химического элемента, состоящая из ядра и электронов.",
-      "пифагор": "Теоремаи Пифагор: Дар секунҷаи росткунҷа квадрати гипотенуза ба суммаи квадратҳои катетҳо баробар аст (a² + b² = c²).",
-      "об": "Формулаи химиявии об H₂O аст. Дар 0°C ях мекунад ва дар 100°C меҷӯшад.",
-      "вода": "Химическая формула воды — H₂O. Замерзает при 0°C и кипит при 100°C.",
-      "water": "The chemical formula of water is H₂O. It freezes at 0°C and boils at 100°C.",
-      "фотосинтез": "Фотосинтез — раванди дар баргҳои сабзи растанӣ бо ёрии нури офтоб аз гази карбонат ва об ҳосил шудани моддаҳои органикӣ ва оксиген аст.",
-      "ҳуҷайра": "Ҳуҷайра — воҳиди асосии сохторӣ ва функсионалии ҳамаи организмҳои зинда (ба истиснои вирусҳо) мебошад.",
-      "нютон": "Қонуни дуюми Нютон: Қувва ба ҳосили зарби масса ва шитоб баробар аст (F = m · a).",
-      "сомониён": "Давлати Сомониён (солҳои 875–999) — аввалин давлати мутамаркази тоҷикон бо пойтахташ шаҳри Бухоро. Асосгузор ва бузургтарин амири он Исмоили Сомонӣ мебошад."
+    const KB = {
+      "қувва": "Қувва — ченаки таъсири мутақобилаи ҷисмҳо ба ҳамдигар мебошад. Воҳидаш Нютон (Н), формулааш: F = m · a.",
+      "паранд": "Парандагон — ҳайвоноти муҳрадори гармхунеанд, ки баданашон бо пар пӯшида шудааст ва бол доранд.",
+      "атом": "Атом — хурдтарин заррачаи модда аст, ки аз ядро ва электронҳо иборат мебошад.",
+      "пифагор": "Теоремаи Пифагор: Дар секунҷаи росткунҷа a² + b² = c² аст.",
+      "об": "Формулаи химиявии об H₂O аст."
     };
+    let DB = JSON.parse(localStorage.getItem('oz_db') || '{}');
 
-    const quizzes = [
-      { q: "1. Формулаи химиявии об кадом аст?", opts: ["CO₂", "H₂O", "O₂"], ans: 1 },
-      { q: "2. Дили парандагон аз чанд хона иборат аст?", opts: ["2 хона", "3 хона", "4 хона"], ans: 2 },
-      { q: "3. Дар секунҷаи росткунҷа a=3 ва b=4 бошад, гипотенуза (c) чанд аст?", opts: ["5", "6", "7"], ans: 0 },
-      { q: "4. Пойтахти давлати Сомониён кадом шаҳр буд?", opts: ["Самарқанд", "Бухоро", "Балх"], ans: 1 },
-      { q: "5. Растаниҳо ҳангоми фотосинтез кадом газро хориҷ мекунанд?", opts: ["Оксиген", "Нитроген", "Гидроген"], ans: 0 }
-    ];
-
-    function init() {
-      const gc = document.getElementById('grades-container');
-      gc.innerHTML = '';
-      for (let i = 1; i <= 11; i++) {
-        const cls = grade === i ? 'grade-btn selected' : 'grade-btn';
-        gc.innerHTML += `<button class="${cls}" onclick="pickGrade(${i})">${data[lang].gw} ${i}</button>`;
+    function draw() {
+      let h = '';
+      for (let i = 1; i <= 11; i++) h += `<button class="btn ${G==i?'active':''}" onclick="pickG(${i})">${T[L].gw} ${i}</button>`;
+      document.getElementById('grades').innerHTML = h;
+    }
+    function pickG(n) {
+      G = n; draw();
+      document.getElementById('subCard').style.display = 'block';
+      document.getElementById('subs').innerHTML = T[L].s.map(x => `<button class="btn" onclick="addM('✅ ${T[L].gw} ${n} — ${x}','bot')">${x}</button>`).join('');
+    }
+    function setL(l) {
+      L = l; ['tg','ru','en'].forEach(x => document.getElementById(x).classList.toggle('active', x==l));
+      ['gt','st','wm','sb'].forEach(k => document.getElementById(k).innerText = T[l][k]);
+      draw(); if (G) pickG(G);
+    }
+    function addM(t, w) {
+      const c = document.getElementById('chat');
+      c.innerHTML += `<div class="msg ${w}">${t}</div>`; c.scrollTop = c.scrollHeight;
+    }
+    async function ask() {
+      const i = document.getElementById('inp'), q = i.value.trim();
+      if (!q) return; addM(q, 'user'); i.value = '';
+      const low = q.toLowerCase();
+      for (let k in DB) if (low.includes(k)) return addM(DB[k], 'bot');
+      for (let k in KB) if (low.includes(k)) return addM(KB[k], 'bot');
+      if (navigator.onLine) {
+        const clean = q.replace(/(чист|кист|что такое|what is|\?)/gi, '').trim();
+        try {
+          const r = await fetch(`https://${L}.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(clean)}&format=json&origin=*`);
+          const d = await r.json();
+          if (d.query?.search?.[0]) {
+            const r2 = await fetch(`https://${L}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(d.query.search[0].title)}`);
+            const d2 = await r2.json();
+            if (d2.extract) { DB[clean.toLowerCase()] = d2.extract; localStorage.setItem('oz_db', JSON.stringify(DB)); return addM(d2.extract, 'bot'); }
+          }
+        } catch (e) {}
       }
+      addM("📴 Дар хотираи офлайн ёфт нашуд. Бо интернет пурсед — барнома онро меёбад ва барои бе интернет сабт мекунад!", 'bot');
     }
-
-    function pickGrade(n) {
-      grade = n;
-      init();
-      document.getElementById('subjects-section').style.display = 'block';
-      const sc = document.getElementById('subjects-container');
-      sc.innerHTML = '';
-      data[lang].subs.forEach(sub => {
-        sc.innerHTML += `<button class="subject-btn" onclick="pickSubject(this, '${sub}')">${sub}</button>`;
-      });
-    }
-
-    function pickSubject(btn, sub) {
-      document.querySelectorAll('.subject-btn').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      switchTab('chat');
-      msg(`✅ ${data[lang].gw} ${grade} — ${sub}. Мавзӯъ ё саволи худро нависед!`, 'bot');
-    }
-
-    function switchTab(tab) {
-      document.getElementById('tab-chat').classList.toggle('active', tab === 'chat');
-      document.getElementById('tab-quiz').classList.toggle('active', tab === 'quiz');
+    draw();
+  </script>
+</body>
+</html>
