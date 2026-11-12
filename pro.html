@@ -81,24 +81,24 @@
       </div>
     </div>
   </main>
-  <script>
+    <script>
     var L = 'tg', G = 0;
     var T = {
-      tg: { gt: "Синфро интихоб кунед (1–11):", st: "Фанро интихоб кунед:", wm: "Салом! Дилхоҳ мавзӯъро нависед.", sb: "Фиристодан", gw: "Синфи", s: ["Математика", "Забон", "Физика", "Химия", "Биология", "Таърих"] },
-      ru: { gt: "Выберите класс (1–11):", st: "Выберите предмет:", wm: "Привет! Напишите любую тему.", sb: "Отправить", gw: "Класс", s: ["Математика", "Язык", "Физика", "Химия", "Биология", "История"] },
-      en: { gt: "Select Grade (1–11):", st: "Select Subject:", wm: "Hello! Type any topic.", sb: "Send", gw: "Grade", s: ["Math", "Language", "Physics", "Chemistry", "Biology", "History"] }
+      tg: { gt: "Синфро интихоб кунед (1–11):", st: "Фанро интихоб кунед:", wm: "Салом! Дилхоҳ саволро нависед — ба ҳамаи фанҳо ҷавоб медиҳам.", sb: "Фиристодан", gw: "Синфи", s: ["Математика", "Забон", "Физика", "Химия", "Биология", "Таърих"] },
+      ru: { gt: "Выберите класс (1–11):", st: "Выберите предмет:", wm: "Привет! Задайте любой вопрос — отвечу по всем предметам.", sb: "Отправить", gw: "Класс", s: ["Математика", "Язык", "Физика", "Химия", "Биология", "История"] },
+      en: { gt: "Select Grade (1–11):", st: "Select Subject:", wm: "Hello! Ask any question across all subjects.", sb: "Send", gw: "Grade", s: ["Math", "Language", "Physics", "Chemistry", "Biology", "History"] }
     };
     var KB = {
-      "бензол": "Бензол (C₆H₆) — карбогидриди ароматии содатарин, моеи беранги бӯйи хосдошта, ки дар саноати химия барои истеҳсоли пластмасса, доруворӣ ва рангҳо истифода мешавад.",
+      "бензол": "Бензол (C₆H₆) — карбогидриди ароматии содатарин, моеи беранг бо бӯйи хос.",
       "қувва": "Қувва — ченаки таъсири мутақобилаи ҷисмҳо мебошад. Воҳидаш Нютон (Н), формулааш: F = m · a.",
       "сосони": "Давлати Сосониён (224–651) — империяи бузурги эронитаборон бо пойтахташ шаҳри Тайсафун.",
       "сомони": "Давлати Сомониён (875–999) — аввалин давлати мутамаркази тоҷикон бо пойтахташ Бухоро.",
       "паранд": "Парандагон — ҳайвоноти муҳрадори гармхунеанд, ки баданашон бо пар пӯшида шудааст.",
-      "атом": "Атом — хурдтарин заррачаи модда аст, ки аз ядро ва электронҳо иборат мебошад.",
+      "атом": "Атом — хурдтарин заррачаи модда аст.",
       "пифагор": "Теоремаи Пифагор: c² = a² + b².",
       "об": "Формулаи химиявии об H₂O аст."
     };
-    var DB = JSON.parse(localStorage.getItem('oz_saved_all') || '{}');
+    var DB = JSON.parse(localStorage.getItem('oz_all_topics') || '{}');
 
     function draw() {
       var h = '';
@@ -148,12 +148,13 @@
       c.innerHTML += '<div class="msg ' + w + '">' + t + '</div>';
       c.scrollTop = c.scrollHeight;
     }
-    function getWiki(langCode, term) {
+    function fetchTopic(langCode, term) {
       return fetch('https://' + langCode + '.wikipedia.org/w/api.php?action=query&list=search&srsearch=' + encodeURIComponent(term) + '&format=json&origin=*')
         .then(function(r) { return r.json(); })
         .then(function(d) {
           if (d.query && d.query.search && d.query.search.length > 0) {
-            return fetch('https://' + langCode + '.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(d.query.search.title));
+            var firstTitle = d.query.search.title;
+            return fetch('https://' + langCode + '.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(firstTitle));
           }
           return null;
         })
@@ -176,15 +177,25 @@
       addM('⏳ Дар ҳоли ҷустуҷӯ...', 'bot');
       var chatBox = document.getElementById('chat');
 
-      getWiki(L, clean).then(function(ans) {
+      fetchTopic(L, clean).then(function(ans) {
         if (ans) return ans;
-        if (L === 'tg') return getWiki('ru', clean);
+        if (L === 'tg') return fetchTopic('ru', clean);
         return null;
       }).then(function(finalAns) {
         chatBox.removeChild(chatBox.lastChild);
         if (finalAns) {
           DB[low] = finalAns;
-          localStorage.setItem('oz_saved_all', JSON.stringify(DB));
+          localStorage.setItem('oz_all_topics', JSON.stringify(DB));
           addM(finalAns + '\n\n💾 (Барои бе интернет сабт шуд)', 'bot');
         } else {
-          addM('📴 Маълумот ёфт нашуд. Номи мавзӯъро кӯтоҳтар нависед (масалан: «Менделеев» ё «Гравитатсия»).', 'bot');
+          addM('📴 Ин мавзӯъ ёфт нашуд. Номи мавзӯъро дақиқтар нависед.', 'bot');
+        }
+      }).catch(function() {
+        chatBox.removeChild(chatBox.lastChild);
+        addM('📴 Интернет хомӯш аст.', 'bot');
+      });
+    }
+    draw();
+  </script>
+</body>
+</html>
