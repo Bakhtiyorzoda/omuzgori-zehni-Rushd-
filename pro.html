@@ -153,7 +153,7 @@
         .then(function(r) { return r.json(); })
         .then(function(d) {
           if (d.query && d.query.search && d.query.search.length > 0) {
-            var firstTitle = d.query.search[0].title;
+            var firstTitle = d.query.search.shift().title;
             return fetch('https://' + langCode + '.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(firstTitle));
           }
           return null;
