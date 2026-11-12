@@ -21,8 +21,8 @@
     .tab.active { background: #0f172a; color: white; }
     .tab.pro { background: #fef3c7; color: #92400e; border: 1px solid #f59e0b; }
     .tab.pro.active { background: #d97706; color: white; }
-    .chat { height: 210px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-bottom: 10px; background: #f8fafc; }
-    .msg { padding: 8px 12px; border-radius: 8px; margin-bottom: 8px; max-width: 88%; line-height: 1.4; }
+    .chat { height: 240px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-bottom: 10px; background: #f8fafc; }
+    .msg { padding: 8px 12px; border-radius: 8px; margin-bottom: 8px; max-width: 90%; line-height: 1.45; font-size: 0.94rem; }
     .bot { background: #e0e7ff; }
     .user { background: #2563eb; color: white; margin-left: auto; }
     .row { display: flex; gap: 6px; }
@@ -54,9 +54,9 @@
       <button class="tab pro" id="t2" onclick="tab(2)">⭐ PRO / ММТ</button>
     </div>
     <div class="card" id="p1">
-      <div class="chat" id="chat"><div class="msg bot" id="wm">Салом! Савол нависед (Қувва, Сосониён, Атом, Пифагор).</div></div>
+      <div class="chat" id="chat"><div class="msg bot" id="wm">Салом! Дилхоҳ мавзӯъро нависед (масалан: Бензол, Қувва, Сосониён, ДНК, Наполеон).</div></div>
       <div class="row">
-        <input id="inp" placeholder="Савол нависед...">
+        <input id="inp" placeholder="Мавзӯъ ё савол нависед...">
         <button class="send" onclick="ask()" id="sb">Фиристодан</button>
       </div>
     </div>
@@ -84,19 +84,22 @@
   <script>
     var L = 'tg', G = 0;
     var T = {
-      tg: { gt: "Синфро интихоб кунед (1–11):", st: "Фанро интихоб кунед:", wm: "Салом! Савол нависед.", sb: "Фиристодан", gw: "Синфи", s: ["Математика", "Забон", "Физика", "Химия", "Биология", "Таърих"] },
-      ru: { gt: "Выберите класс (1–11):", st: "Выберите предмет:", wm: "Привет! Напишите вопрос.", sb: "Отправить", gw: "Класс", s: ["Математика", "Язык", "Физика", "Химия", "Биология", "История"] },
-      en: { gt: "Select Grade (1–11):", st: "Select Subject:", wm: "Hello! Ask a question.", sb: "Send", gw: "Grade", s: ["Math", "Language", "Physics", "Chemistry", "Biology", "History"] }
+      tg: { gt: "Синфро интихоб кунед (1–11):", st: "Фанро интихоб кунед:", wm: "Салом! Дилхоҳ мавзӯъро нависед.", sb: "Фиристодан", gw: "Синфи", s: ["Математика", "Забон", "Физика", "Химия", "Биология", "Таърих"] },
+      ru: { gt: "Выберите класс (1–11):", st: "Выберите предмет:", wm: "Привет! Напишите любую тему.", sb: "Отправить", gw: "Класс", s: ["Математика", "Язык", "Физика", "Химия", "Биология", "История"] },
+      en: { gt: "Select Grade (1–11):", st: "Select Subject:", wm: "Hello! Type any topic.", sb: "Send", gw: "Grade", s: ["Math", "Language", "Physics", "Chemistry", "Biology", "History"] }
     };
     var KB = {
+      "бензол": "Бензол (C₆H₆) — карбогидриди ароматии содатарин, моеи беранги бӯйи хосдошта, ки дар саноати химия барои истеҳсоли пластмасса, доруворӣ ва рангҳо истифода мешавад.",
       "қувва": "Қувва — ченаки таъсири мутақобилаи ҷисмҳо мебошад. Воҳидаш Нютон (Н), формулааш: F = m · a.",
       "сосони": "Давлати Сосониён (224–651) — империяи бузурги эронитаборон бо пойтахташ шаҳри Тайсафун.",
       "сомони": "Давлати Сомониён (875–999) — аввалин давлати мутамаркази тоҷикон бо пойтахташ Бухоро.",
       "паранд": "Парандагон — ҳайвоноти муҳрадори гармхунеанд, ки баданашон бо пар пӯшида шудааст.",
-      "атом": "Атом — хурдтарин заррачаи модда аст.",
+      "атом": "Атом — хурдтарин заррачаи модда аст, ки аз ядро ва электронҳо иборат мебошад.",
       "пифагор": "Теоремаи Пифагор: c² = a² + b².",
-      "об": "Формулаи об H₂O аст."
+      "об": "Формулаи химиявии об H₂O аст."
     };
+    var DB = JSON.parse(localStorage.getItem('oz_saved_all') || '{}');
+
     function draw() {
       var h = '';
       for (var i = 1; i <= 11; i++) {
@@ -127,7 +130,7 @@
     }
     function tab(n) {
       document.getElementById('t1').className = n == 1 ? 'tab active' : 'tab';
-      document.getElementById('t2').className = n == 2 ? 'tab pro active' : 'tab pro';
+      document.getElementById('t2').className = n == 2 ? 'tab pro active' : 'tab';
       document.getElementById('p1').style.display = n == 1 ? 'block' : 'none';
       document.getElementById('p2').style.display = n == 2 ? 'block' : 'none';
     }
@@ -145,31 +148,43 @@
       c.innerHTML += '<div class="msg ' + w + '">' + t + '</div>';
       c.scrollTop = c.scrollHeight;
     }
+    function getWiki(langCode, term) {
+      return fetch('https://' + langCode + '.wikipedia.org/w/api.php?action=query&list=search&srsearch=' + encodeURIComponent(term) + '&format=json&origin=*')
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (d.query && d.query.search && d.query.search.length > 0) {
+            return fetch('https://' + langCode + '.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(d.query.search.title));
+          }
+          return null;
+        })
+        .then(function(r2) { return r2 ? r2.json() : null; })
+        .then(function(d2) { return (d2 && d2.extract) ? d2.extract : null; });
+    }
     function ask() {
       var i = document.getElementById('inp');
       var q = i.value.trim();
       if (!q) return;
       addM(q, 'user');
       i.value = '';
-      var low = q.toLowerCase().replace(/ё/g, 'е');
-      for (var k in KB) {
-        if (low.indexOf(k) !== -1) { addM(KB[k], 'bot'); return; }
-      }
-      fetch('https://' + L + '.wikipedia.org/w/api.php?action=query&list=search&srsearch=' + encodeURIComponent(q) + '&format=json&origin=*')
-        .then(function(r) { return r.json(); })
-        .then(function(d) {
-          if (d.query && d.query.search && d.query.search.length > 0) {
-            return fetch('https://' + L + '.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(d.query.search.title));
-          }
-        })
-        .then(function(r2) { return r2 ? r2.json() : null; })
-        .then(function(d2) {
-          if (d2 && d2.extract) addM(d2.extract, 'bot');
-          else addM('📴 Ин мавзӯъ ёфт нашуд. Дар бораи Қувва, Сосониён ё Атом пурсед.', 'bot');
-        })
-        .catch(function() { addM('📴 Хатогии шабака.', 'bot'); });
-    }
-    draw();
-  </script>
-</body>
-</html>
+      var clean = q.replace(/[?.,!]/g, '').replace(/(чист|кист|дар бораи|маълумот|что такое|кто такой|what is)/gi, '').trim();
+      if (!clean) clean = q.replace(/[?.,!]/g, '').trim();
+      var low = clean.toLowerCase().replace(/ё/g, 'е');
+
+      for (var k in DB) { if (low.indexOf(k) !== -1 || k.indexOf(low) !== -1) { addM(DB[k], 'bot'); return; } }
+      for (var k in KB) { if (low.indexOf(k) !== -1 || k.indexOf(low) !== -1) { addM(KB[k], 'bot'); return; } }
+
+      addM('⏳ Дар ҳоли ҷустуҷӯ...', 'bot');
+      var chatBox = document.getElementById('chat');
+
+      getWiki(L, clean).then(function(ans) {
+        if (ans) return ans;
+        if (L === 'tg') return getWiki('ru', clean);
+        return null;
+      }).then(function(finalAns) {
+        chatBox.removeChild(chatBox.lastChild);
+        if (finalAns) {
+          DB[low] = finalAns;
+          localStorage.setItem('oz_saved_all', JSON.stringify(DB));
+          addM(finalAns + '\n\n💾 (Барои бе интернет сабт шуд)', 'bot');
+        } else {
+          addM('📴 Маълумот ёфт нашуд. Номи мавзӯъро кӯтоҳтар нависед (масалан: «Менделеев» ё «Гравитатсия»).', 'bot');
