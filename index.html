@@ -88,9 +88,7 @@
       </div>
     </div>
   </main>
-
   <script>
-    // ТАНЗИМОТИ ШАХСИИ ШУМО (ИН 3 САТРРО ИВАЗ КУНЕД):
     const MY_CARD = "9762 0000 0000 0000";
     const MY_TELEGRAM = "@Bakhtiyorzoda";
     const PROMO_CODES = ["OMUZGOR2026", "MMT100", "RUSHD777"];
@@ -105,8 +103,8 @@
       en: { gt: "Select Grade (1–11):", st: "Select Subject:", wm: "Hello! Ask any question.", sb: "Send", gw: "Grade", s: ["Math", "Language", "Physics", "Chemistry", "Biology", "History"] }
     };
     const KB = {
-      "сосони": "Давлати Сосониён (солҳои 224–651 мелодӣ) — империяи бузурги эронитаборон, ки аз ҷониби Ардашери Бобакон таъсис ёфта, пойтахташ шаҳри Тайсафун буд.",
-      "сомони": "Давлати Сомониён (875–999) — аввалин давлати мутамаркази тоҷикон бо пойтахташ шаҳри Бухоро ва амири бузургаш Исмоили Сомонӣ.",
+      "сосони": "Давлати Сосониён (солҳои 224–651 мелодӣ) — империяи бузурги эронитаборон бо пойтахташ шаҳри Тайсафун.",
+      "сомони": "Давлати Сомониён (875–999) — аввалин давлати мутамаркази тоҷикон бо пойтахташ шаҳри Бухоро.",
       "қувва": "Қувва — ченаки таъсири мутақобилаи ҷисмҳо ба ҳамдигар мебошад. Воҳидаш Нютон (Н), формулааш: F = m · a.",
       "паранд": "Парандагон — ҳайвоноти муҳрадори гармхунеанд, ки баданашон бо пар пӯшида шудааст ва бол доранд.",
       "атом": "Атом — хурдтарин заррачаи модда аст, ки аз ядро ва электронҳо иборат мебошад.",
@@ -117,19 +115,32 @@
 
     function draw() {
       let h = '';
-      for (let i = 1; i <= 11; i++) h += `<button class="btn ${G==i?'active':''}" onclick="pickG(${i})">${T[L].gw} ${i}</button>`;
+      for (let i = 1; i <= 11; i++) {
+        h += '<button class="btn ' + (G == i ? 'active' : '') + '" onclick="pickG(' + i + ')">' + T[L].gw + ' ' + i + '</button>';
+      }
       document.getElementById('grades').innerHTML = h;
     }
+
     function pickG(n) {
-      G = n; draw();
+      G = n;
+      draw();
       document.getElementById('subCard').style.display = 'block';
-      document.getElementById('subs').innerHTML = T[L].s.map(x => `<button class="btn" onclick="addM('✅ ${T[L].gw} ${n} — ${x}','bot')">${x}</button>`).join('');
+      let sh = '';
+      for (let j = 0; j < T[L].s.length; j++) {
+        let sub = T[L].s[j];
+        sh += '<button class="btn" onclick="addM(\'✅ ' + T[L].gw + ' ' + n + ' — ' + sub + '\',\'bot\')">' + sub + '</button>';
+      }
+      document.getElementById('subs').innerHTML = sh;
     }
+
     function setL(l) {
-      L = l; ['tg','ru','en'].forEach(x => document.getElementById(x).classList.toggle('active', x==l));
-      ['gt','st','wm','sb'].forEach(k => document.getElementById(k).innerText = T[l][k]);
-      draw(); if (G) pickG(G);
+      L = l;
+      ['tg', 'ru', 'en'].forEach(function(x) { document.getElementById(x).classList.toggle('active', x == l); });
+      ['gt', 'st', 'wm', 'sb'].forEach(function(k) { document.getElementById(k).innerText = T[l][k]; });
+      draw();
+      if (G) pickG(G);
     }
+
     function openTab(tab) {
       document.getElementById('tChat').classList.toggle('active', tab == 'chat');
       document.getElementById('tPro').classList.toggle('active', tab == 'pro');
@@ -140,28 +151,54 @@
         document.getElementById('proUnlocked').style.display = 'block';
       }
     }
+
     function unlockPro() {
-      const code = document.getElementById('promoInp').value.trim().toUpperCase();
-      if (PROMO_CODES.includes(code)) {
+      let code = document.getElementById('promoInp').value.trim().toUpperCase();
+      if (PROMO_CODES.indexOf(code) !== -1) {
         localStorage.setItem('oz_pro', '1');
         document.getElementById('proLocked').style.display = 'none';
         document.getElementById('proUnlocked').style.display = 'block';
       } else {
-        document.getElementById('promoErr').innerText = "❌ Рамз нодуруст аст. Боз санҷед ё ба мо нависед.";
+        document.getElementById('promoErr').innerText = "❌ Рамз нодуруст аст.";
       }
     }
+
     function addM(t, w) {
-      const c = document.getElementById('chat');
-      c.innerHTML += `<div class="msg ${w}">${t}</div>`; c.scrollTop = c.scrollHeight;
+      let c = document.getElementById('chat');
+      c.innerHTML += '<div class="msg ' + w + '">' + t + '</div>';
+      c.scrollTop = c.scrollHeight;
     }
+
     async function ask() {
-      const i = document.getElementById('inp'), q = i.value.trim();
-      if (!q) return; addM(q, 'user'); i.value = '';
-      const low = q.toLowerCase().replace(/ё/g, 'е');
-      for (let k in DB) if (low.includes(k)) return addM(DB[k], 'bot');
-      for (let k in KB) if (low.includes(k)) return addM(KB[k], 'bot');
+      let i = document.getElementById('inp');
+      let q = i.value.trim();
+      if (!q) return;
+      addM(q, 'user');
+      i.value = '';
+      let low = q.toLowerCase().replace(/ё/g, 'е');
+      for (let k in DB) { if (low.indexOf(k) !== -1) return addM(DB[k], 'bot'); }
+      for (let k in KB) { if (low.indexOf(k) !== -1) return addM(KB[k], 'bot'); }
       if (navigator.onLine) {
-        const clean = q.replace(/(чист|кист|что такое|what is|\?)/gi, '').trim();
+        let clean = q.replace(/(чист|кист|что такое|what is|\?)/gi, '').trim();
         try {
-          const r = await fetch(`https://${L}.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(clean)}&format=json&origin=*`);
-          const d = await r.json();
+          let r = await fetch('https://' + L + '.wikipedia.org/w/api.php?action=query&list=search&srsearch=' + encodeURIComponent(clean) + '&format=json&origin=*');
+          let d = await r.json();
+          if (d.query && d.query.search && d.query.search.length > 0) {
+            let title = d.query.search[0].title;
+            let r2 = await fetch('https://' + L + '.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(title));
+            let d2 = await r2.json();
+            if (d2.extract) {
+              DB[low] = d2.extract;
+              localStorage.setItem('oz_db', JSON.stringify(DB));
+              return addM(d2.extract, 'bot');
+            }
+          }
+        } catch (e) {}
+      }
+      addM("📴 Дар хотираи офлайн ёфт нашуд. Бо интернет пурсед!", 'bot');
+    }
+
+    draw();
+  </script>
+</body>
+</html>
